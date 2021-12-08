@@ -1,7 +1,5 @@
 {% extends "encyclopedia/layout.html" %}
 
 {% block body %}
-<div>
-    {{ html_markdown|safe }}
-</div>
+        {{content|safe}}
 {% endblock %}

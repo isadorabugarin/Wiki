@@ -5,8 +5,8 @@ from . import views
 app_name="tasks"
 urlpatterns = [
     path("", views.index, name="index"),
-    path("query", views.query, name="query"),
+    path("search", views.search, name="search"),
     path("new", views.new, name="new"),
-    path("<str:title>", views.title, name="title")
+    path("<str:entry>", views.entry, name="entry")
 
 ]

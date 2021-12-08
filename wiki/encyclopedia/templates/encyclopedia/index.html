@@ -5,11 +5,17 @@
 {% endblock %}
 
 {% block body %}
-    <h1>All Pages</h1>
+
+{% if searching == True  %}
+<h1>"{{ value }}" was not found!</h1>
+Perhaps you meant:
+{% else %}
+<h1>All Pages</h1>
+{% endif %}
 
     <ul>
         {% for title in entries %}
-        <li><a href="http://127.0.0.1:8000/wiki/{{ title }}">{{ title }}</a></li>
+        <li><a href="/wiki/{{ title }}">{{ title }}</a></li>
         {% endfor %}
     </ul>
 

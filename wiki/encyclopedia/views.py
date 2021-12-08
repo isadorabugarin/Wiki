@@ -1,9 +1,8 @@
 from django import forms
 from django.shortcuts import render
+from markdown2 import Markdown
 
 from . import util
-
-
 
 class NewTaskForm(forms.Form):
     query = forms.CharField(label="Search")

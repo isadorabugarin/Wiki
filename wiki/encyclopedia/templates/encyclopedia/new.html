@@ -3,8 +3,21 @@
 {% block body %}
     <h2>Add New Entry</h2>
 
-                <form action="{% url 'tasks:new'%}" method="post">
-                    {% csrf_token %}
-                    {{ form }}
-                </form>
+{% if existing %}
+<div class="alert alert-danger" role="alert">
+	This entry already exists! If you want to view or edit it, <a href="/wiki/{{ entry }}" class="alert-link">Click Here!</a>
+</div>
+<div class="alert alert-info" role="alert">
+	Try a new entry name here!
+</div>
+{% endif %}
+<br>
+<div class="form-group">
+	<form action="{% url 'tasks:new' %}" method="post">
+	{% csrf_token %}
+	{{form2.as_p}}
+	<input type=submit>
+	</form>
+</div>
+
 {% endblock %}

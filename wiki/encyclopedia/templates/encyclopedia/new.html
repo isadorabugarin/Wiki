@@ -1,9 +1,13 @@
 {% extends "encyclopedia/layout.html" %}
 
 {% block body %}
-    <h2>Add New Entry</h2>
+{% if edit%}
+<h2>Edit Entry "{{ entry }}":</h2>
+{% else %}
+<h2>Add New Entry!</h2>
+{% endif %}
 
-{% if existing %}
+{% if entry_exists %}
 <div class="alert alert-danger" role="alert">
 	This entry already exists! If you want to view or edit it, <a href="/wiki/{{ entry }}" class="alert-link">Click Here!</a>
 </div>

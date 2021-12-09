@@ -1,3 +1,5 @@
+import secrets
+
 from django import forms
 from django.shortcuts import render
 from markdown2 import Markdown
@@ -67,7 +69,7 @@ def search(request):
 
 #NEW ENTRY PAGE
 class NewEntryForm(forms.Form):
-    entry = forms.CharField(label="Entry", widget=forms.TextInput(attrs={'class': 'form-control col-md-8 col-lg-g'}))
+    title = forms.CharField(label="Entry", widget=forms.TextInput(attrs={'class': 'form-control col-md-8 col-lg-g'}))
     content = forms.CharField(widget=forms.Textarea(attrs={'class': 'form-control col-md-8 col-lg-8','rows':10}))
     edit = forms.BooleanField(initial=False, widget=forms.HiddenInput(), required=False)
 
@@ -76,25 +78,26 @@ def new(request):
     if request.method == "POST":
         form = NewEntryForm(request.POST)
         if form.is_valid():
-            title = form.cleaned_data["entry"]
+            markdowner = Markdown()
+            title = form.cleaned_data["title"].capitalize()
             content = form.cleaned_data["content"]
             if(util.get_entry(title) is None or form.cleaned_data["edit"] is True ):
                 util.save_entry(title,content)
                 return render(request, "encyclopedia/entry.html", {
-                    "content": content,
+                    "content": markdowner.convert(content),
                     "form":SearchForm()
                 })
             else:
                 return render(request, "encyclopedia/new.html", {
                         "form2": form,
-                        "existing": True,
+                        "entry_exists": True,
                         "entry": title,
                         "form": SearchForm()
                 })
         else:
             return render(request, "encyclopedia/new.html", {
             "form2": form,
-            "existing": False,
+            "entry_exists": False,
             "form": SearchForm()
             })
     else:
@@ -104,26 +107,35 @@ def new(request):
         })
 
 #EDIT ENTRY PAGE
-
 def edit(request, entry):
     content = util.get_entry(entry)
     if content is None:
-        return render(request, "encyclopedia.notfound.html", {
-            "entry":entry
+        return render(request, "encyclopedia/notfound.html", {
+            "entry":entry,
+            "form": SearchForm()
         })
     else:
         form = NewEntryForm()
-        form.fields["entry"].initial = entry
-        form.fields["entry"].widget = forms.HiddenInput()
-        form.fields["entry"].initial = content
-        form.fields["entry"].initial = True
+        form.fields["title"].initial = entry
+        form.fields["content"].initial = content
+        form.fields["edit"].initial = True
         return render(request, "encyclopedia/new.html", {
             "form2":form,
+            "form": SearchForm(),
             "edit":form.fields["edit"].initial,
-            "entry": form.fields["entry"].initial
+            "entry": form.fields["title"].initial
 
         })
 #RANDOM PAGE
-
+def random(request):
+    markdowner = Markdown()
+    entries = util.list_entries()
+    random = secrets.choice(entries)
+    content = util.get_entry(random)
+    return render(request, "encyclopedia/entry.html", {
+	"entry":random,
+    "content": markdowner.convert(content),
+    "form": SearchForm()
+    })
 
 
